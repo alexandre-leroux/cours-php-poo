@@ -1,41 +1,7 @@
 <?php
-require_once ('libraries/database.php');
-require_once ('libraries/utils.php');
 
-$author = null;
-if (!empty($_POST['author'])) {
-    $author = $_POST['author'];
-}
+require_once('libraries/autoload.php');
 
-// Ensuite le contenu
-$content = null;
-if (!empty($_POST['content'])) {
-    // On fait quand même gaffe à ce que le gars n'essaye pas des balises cheloues dans son commentaire
-    $content = htmlspecialchars($_POST['content']);
-}
+$controller = new \controllers\Comment();
 
-// Enfin l'id de l'article
-$article_id = null;
-if (!empty($_POST['article_id']) && ctype_digit($_POST['article_id'])) {
-    $article_id = $_POST['article_id'];
-}
-
-// Vérification finale des infos envoyées dans le formulaire (donc dans le POST)
-// Si il n'y a pas d'auteur OU qu'il n'y a pas de contenu OU qu'il n'y a pas d'identifiant d'article
-if (!$author || !$article_id || !$content) {
-    die("Votre formulaire a été mal rempli !");
-}
-
-
-$article = findAllArticles($article_id);
-
-// Si rien n'est revenu, on fait une erreur
-if (!$article) {
-    die("Ho ! L'article $article_id n'existe pas boloss !");
-}
-
-// 3. Insertion du commentaire
-insertComment( $author,  $content,  $article_id);
-
-
-redirect("article.php?id=" . $article_id);
+$controller->insert();
